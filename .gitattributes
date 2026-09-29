@@ -1,2 +1,4 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Normalisation automatique des fins de ligne (LF, requis par le Dockerfile)
+* text=auto eol=lf
+*.png binary
+*.jpg binary

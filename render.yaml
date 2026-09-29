@@ -1,0 +1,16 @@
+# Déploiement sur Render (https://render.com) : « New > Blueprint » puis sélectionner ce dépôt.
+services:
+  - type: web
+    name: cv-matcher-pro
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/auth/me
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: AI_DAILY_LIMIT
+        value: "40"
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1
