@@ -127,7 +127,8 @@ const post = <T>(url: string, body?: unknown) => request<T>('POST', url, body ??
 
 export const api = {
   me: () => request<{ user: User | null }>('GET', '/api/auth/me'),
-  signup: (b: { email: string; password: string; name: string }) => post<{ user: User }>('/api/auth/signup', b),
+  authConfig: () => request<{ inviteRequired: boolean }>('GET', '/api/auth/config'),
+  signup: (b: { email: string; password: string; name: string; invite?: string }) => post<{ user: User }>('/api/auth/signup', b),
   login: (b: { email: string; password: string }) => post<{ user: User }>('/api/auth/login', b),
   logout: () => post<{ ok: true }>('/api/auth/logout'),
   rename: (name: string) => request<{ user: User }>('PATCH', '/api/auth/me', { name }),

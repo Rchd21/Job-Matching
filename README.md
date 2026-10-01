@@ -29,6 +29,8 @@ NODE_ENV=production PORT=3000 npm start   # http://localhost:3000
 |---|---|---|
 | `ANTHROPIC_API_KEY` | Clé de l'API Claude (obligatoire) | — |
 | `AI_DAILY_LIMIT` | Crédits IA par utilisateur et par jour | `40` |
+| `GLOBAL_DAILY_LIMIT` | Crédits IA par jour, tous utilisateurs confondus | `300` |
+| `INVITE_CODE` | Code exigé à l'inscription (vide = inscriptions libres) | — |
 | `DATA_DIR` | Dossier de la base SQLite | `./data` |
 | `PORT` | Port en production (fourni par l'hébergeur) | `3001` |
 | `API_PORT` | Port de l'API en développement | `3001` |

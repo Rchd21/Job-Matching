@@ -180,8 +180,14 @@ export function AuthPage({ mode, onAuth }: { mode: 'connexion' | 'inscription'; 
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [consent, setConsent] = React.useState(false)
+  const [invite, setInvite] = React.useState('')
+  const [inviteRequired, setInviteRequired] = React.useState(false)
   const [busy, setBusy] = React.useState(false)
   const [error, setError] = React.useState('')
+
+  React.useEffect(() => {
+    if (signup) api.authConfig().then((c) => setInviteRequired(c.inviteRequired)).catch(() => {})
+  }, [signup])
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -189,7 +195,7 @@ export function AuthPage({ mode, onAuth }: { mode: 'connexion' | 'inscription'; 
     if (signup && !consent) { setError("Acceptez les conditions d'utilisation pour créer votre compte."); return }
     setBusy(true)
     try {
-      const { user } = signup ? await api.signup({ name, email, password }) : await api.login({ email, password })
+      const { user } = signup ? await api.signup({ name, email, password, invite }) : await api.login({ email, password })
       onAuth(user)
       navigate('tableau-de-bord')
     } catch (err) {
@@ -225,6 +231,13 @@ export function AuthPage({ mode, onAuth }: { mode: 'connexion' | 'inscription'; 
               <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={signup ? 'new-password' : 'current-password'} minLength={8} required aria-describedby={signup ? 'pw-help' : undefined} className={cn(fieldClass, 'h-10 px-3')} />
               {signup && <p id="pw-help" className="mt-1.5 text-xs text-muted-foreground">8 caractères minimum.</p>}
             </div>
+            {signup && inviteRequired && (
+              <div>
+                <label htmlFor="invite" className="mb-1.5 block text-sm font-medium">Code d'invitation</label>
+                <input id="invite" value={invite} onChange={(e) => setInvite(e.target.value)} autoComplete="off" required aria-describedby="invite-help" className={cn(fieldClass, 'h-10 px-3')} />
+                <p id="invite-help" className="mt-1.5 text-xs text-muted-foreground">L'accès est pour l'instant sur invitation.</p>
+              </div>
+            )}
             {signup && (
               <label className="flex items-start gap-2.5 text-sm">
                 <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 size-4 accent-[var(--primary)]" />

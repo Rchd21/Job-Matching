@@ -31,9 +31,8 @@ function withQuota(cost, handler) {
     if (!process.env.ANTHROPIC_API_KEY) {
       return res.status(500).json({ error: 'Aucune clé API configurée. Ajoutez ANTHROPIC_API_KEY dans le fichier .env.' });
     }
-    if (!quota.consume(req.user.id, cost)) {
-      return res.status(429).json({ error: `Limite quotidienne atteinte (${quota.LIMIT} crédits IA par jour). Elle se réinitialise à minuit (UTC).` });
-    }
+    const refused = quota.consume(req.user.id, cost);
+    if (refused) return res.status(429).json({ error: refused });
     try {
       await handler(req, res);
     } catch (err) {

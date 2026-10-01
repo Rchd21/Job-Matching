@@ -65,11 +65,23 @@ function tooManyAttempts(ip) {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Code d'invitation facultatif : si INVITE_CODE est défini, il est exigé pour créer un compte.
+const INVITE_CODE = (process.env.INVITE_CODE || '').trim();
+
 function mount(app) {
+  app.get('/api/auth/config', (req, res) => res.json({ inviteRequired: !!INVITE_CODE }));
+
   app.post('/api/auth/signup', (req, res) => {
-    const { email = '', password = '', name = '' } = req.body || {};
+    const { email = '', password = '', name = '', invite = '' } = req.body || {};
     const mail = String(email).trim().toLowerCase();
     if (tooManyAttempts(req.ip)) return res.status(429).json({ error: 'Trop de tentatives. Réessayez dans 15 minutes.' });
+    if (INVITE_CODE) {
+      const given = Buffer.from(String(invite).trim());
+      const expected = Buffer.from(INVITE_CODE);
+      if (given.length !== expected.length || !crypto.timingSafeEqual(given, expected)) {
+        return res.status(403).json({ error: "Code d'invitation invalide." });
+      }
+    }
     if (!EMAIL_RE.test(mail)) return res.status(400).json({ error: 'Adresse e-mail invalide.' });
     if (String(password).length < 8) return res.status(400).json({ error: 'Le mot de passe doit contenir au moins 8 caractères.' });
     if (!String(name).trim()) return res.status(400).json({ error: 'Indiquez votre prénom.' });

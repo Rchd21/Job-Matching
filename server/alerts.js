@@ -22,7 +22,7 @@ function mergeSuggestions(userId, offers, criteria) {
 async function runAlert(userId, settings) {
   const cv = defaultCv(userId);
   if (!cv) return;
-  if (!quota.consume(userId, quota.COST.suggest)) return;
+  if (quota.consume(userId, quota.COST.suggest)) return;
   const criteria = { location: settings.location || '', contract: settings.contract || '', remote: !!settings.remote };
   try {
     const offers = await suggestOffers(cv.text, criteria);

@@ -9,6 +9,8 @@ export default defineConfig({
   build: { chunkSizeWarningLimit: 900 },
   server: {
     port: 5173,
+    // Accessible depuis les autres appareils du réseau local (téléphone sur le même Wi-Fi).
+    host: true,
     proxy: { '/api': 'http://localhost:3001' },
   },
 })
